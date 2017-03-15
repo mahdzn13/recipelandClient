@@ -1,0 +1,28 @@
+<ion-view>
+  <ion-content>
+    <form ng-submit="addAllergy()">
+      <div class="list">
+        <label class="item item-input item-select">
+          <div class="input-label">
+            Allergies
+          </div>
+          <select ng-model="selectedAllergy"
+                  ng-options="allergy.name for allergy in allergies">
+          </select>
+        </label>
+        <label class="item">
+          <button class="button button-block button-positive" type="submit">Añadir</button>
+        </label>
+      </div>
+    </form>
+
+    <div class="list">
+      <div class="card" ng-repeat="allergy in allergies">
+        <div class="item item-text-wrap">
+          {{ allergy.name }}
+        </div>
+      </div>
+    </div>
+
+  </ion-content>
+</ion-view>

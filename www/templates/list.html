@@ -1,0 +1,27 @@
+<ion-view>
+  <ion-content>
+
+    <div class="list">
+
+      <a ng-repeat="recipe in recipeList"
+         class="item item-thumbnail-left"
+         url=""
+      >
+        <img ng-src="{{recipe.image}}">
+        <h2>{{ recipe.name }}</h2>
+        <h4>by admin</h4>
+      </a>
+
+    </div>
+
+    <div>Sack ma dack</div>
+    <div>Sack ma dack 2</div>
+
+    <!--
+    Imagen de la card
+    <div class="item item-image">
+      <img src="http://www.chicospl.com/wp-content/uploads/2013/12/shutterstock_94575220-300x300.jpg">
+    </div>-->
+
+  </ion-content>
+</ion-view>
