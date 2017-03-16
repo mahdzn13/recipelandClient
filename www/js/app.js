@@ -20,48 +20,13 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       StatusBar.styleDefault();
     }
   });
+
 })
 
-.config(function($httpProvider, $provide, $stateProvider, $urlRouterProvider) {
-  // Interceptor
-  $provide.factory('myHttpInterceptor', function($q) {
-  return {
-    // optional method
-    'request': function(config) {
-      // do something on success
-      console.log("I'm requesting bitch!");
-      return config;
-    },
+.config(function($ionicConfigProvider, $httpProvider, $provide, $stateProvider, $urlRouterProvider) {
+  // Cache 0
+  $ionicConfigProvider.views.maxCache(0);
 
-    // optional method
-   'requestError': function(rejection) {
-      // do something on error
-      if (canRecover(rejection)) {
-        return responseOrNewPromise
-      }
-      return $q.reject(rejection);
-    },
-
-
-
-    // optional method
-    'response': function(response) {
-      // do something on success
-      return response;
-    },
-
-    // optional method
-   'responseError': function(rejection) {
-      // do something on error
-      if (canRecover(rejection)) {
-        return responseOrNewPromise
-      }
-      return $q.reject(rejection);
-    }
-  };
-});
-
-  $httpProvider.interceptors.push('myHttpInterceptor');
 
   // State provider...
   $stateProvider
@@ -69,24 +34,55 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       url: '/app',
       abstract: true,
       templateUrl: 'templates/sideMenu.html',
-      controller: 'AppCtrl'
-  })
+      controller: 'menuCtrl'
+    })
 
-  .state('app.search', {
-    url: '/search',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/search.html'
-      }
-    }
-  })
-
-  .state('app.allergies', {
-      url: '/allergies',
+    .state('app.search', {
+      url: '/search',
       views: {
         'menuContent': {
-          templateUrl: 'templates/allergies.html',
-          controller: 'allergiesCtrl'
+          templateUrl: 'templates/search.html',
+          controller: 'searchCtrl'
+        }
+      }
+    })
+
+    .state('app.allergies', {
+        url: '/allergies',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/allergies.html',
+            controller: 'allergiesCtrl'
+          }
+        }
+      })
+
+    .state('app.blacklist', {
+      url: '/blacklist',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/list.html',
+          controller: 'blacklistCtrl'
+        }
+      }
+    })
+
+    .state('app.fav', {
+      url: '/fav',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/list.html',
+          controller: 'favCtrl'
+        }
+      }
+    })
+
+    .state('app.seelater', {
+      url: '/seelater',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/list.html',
+          controller: 'seelaterCtrl'
         }
       }
     })
@@ -95,16 +91,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       url: '/list',
       views: {
         'menuContent': {
-          templateUrl: 'templates/list.html'
-        }
-      }
-    })
-
-    .state('app.recipe', {
-      url: '/recipe',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/recipe.html',
+          templateUrl: 'templates/list.html',
+          controller: 'searchListCtrl'
         }
       }
     })
@@ -114,16 +102,36 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       views: {
         'menuContent': {
           templateUrl: 'templates/mainMenu.html',
+          controller: 'menuCtrl'
         }
       }
     })
 
-    .state('app.login', {
+    .state('app.recipe', {
+      url: '/recipe',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/recipe.html',
+          controller: 'recipeCtrl'
+        }
+      }
+    })
+
+    .state('app.randomRecipe', {
+      url: '/recipe',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/recipe.html',
+          controller: 'randomRecipeCtrl'
+        }
+      }
+    })
+
+    .state('login', {
       url: '/login',
       templateUrl: 'templates/login.html',
       controller: 'loginCtrl'
-
     });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/mainMenu');
+  $urlRouterProvider.otherwise('/login');
 });

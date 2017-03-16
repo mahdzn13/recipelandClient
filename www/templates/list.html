@@ -1,11 +1,13 @@
 <ion-view>
+  <ion-nav-title>
+    {{title}}
+  </ion-nav-title>
   <ion-content>
-
-    <div class="list">
-
+    <div ng-controller="listCtrl" class="list">
       <a ng-repeat="recipe in recipeList"
          class="item item-thumbnail-left"
-         url=""
+         on-tap="savedRecipe({{recipe}})"
+         href="#/app/recipe"
       >
         <img ng-src="{{recipe.image}}">
         <h2>{{ recipe.name }}</h2>
@@ -13,9 +15,6 @@
       </a>
 
     </div>
-
-    <div>Sack ma dack</div>
-    <div>Sack ma dack 2</div>
 
     <!--
     Imagen de la card

@@ -1,17 +1,20 @@
 <ion-view>
   <ion-content>
-    <form ng-submit="addAllergy()">
+    <form>
       <div class="list">
         <label class="item item-input item-select">
           <div class="input-label">
             Allergies
           </div>
           <select ng-model="selectedAllergy"
-                  ng-options="allergy.name for allergy in allergies">
+                  ng-options="allergy.name for allergy in allAllergies">
           </select>
         </label>
         <label class="item">
-          <button class="button button-block button-positive" type="submit">Añadir</button>
+          <button
+            class="button button-block button-positive">
+            Añadir
+          </button>
         </label>
       </div>
     </form>

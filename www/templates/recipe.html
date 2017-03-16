@@ -1,25 +1,30 @@
 <ion-view>
+  <ion-nav-title>
+    {{recipe.name}}
+  </ion-nav-title>
   <ion-content>
-
-      <div class="item item-avatar card">
-        <img src="/www/img/ionic.png">
-        <h2>Marty McFly</h2>
-        <p>November 05, 1955</p>
-      </div>
-
+    <div class="list card">
       <div class="item item-body">
-        <img class="full-image" src="/www/img/ionic.png">
-        <p>
-          This is a "Facebook" styled Card. The header is created from a Thumbnail List item,
-          the content is from a card-body consisting of an image and paragraph text. The footer
-          consists of tabs, icons aligned left, within the card-footer.
-        </p>
-        <p>
-          <a href="#" class="subdued">1 Like</a>
-          <a href="#" class="subdued">5 Comments</a>
-        </p>
-      </div>
 
+        <img class="full-image" src="{{recipe.image}}">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis scelerisque velit non varius tempor. Maecenas non tempus nibh, vitae condimentum magna. Cras sed odio hendrerit, luctus justo sed, bibendum diam. Morbi non tortor porttitor, consectetur diam ornare, tincidunt dui. Aliquam luctus ante nec sapien hendrerit rhoncus ac a massa. Cras a lobortis nulla. Maecenas faucibus tellus tortor, sed facilisis quam ullamcorper id. Phasellus blandit rhoncus ipsum vel molestie. Pellentesque laoreet, sapien sed consectetur consequat, tortor massa ultrices purus, id tempor nibh quam ac dui. Aliquam faucibus leo vitae lacus semper molestie. Maecenas porttitor ac diam at suscipit. Aliquam et est id turpis scelerisque tincidunt ut sit amet nulla. Sed ut orci vel erat fermentum porttitor et non enim. Vestibulum efficitur ex id massa ullamcorper, id viverra ante lacinia. Nulla ultricies arcu a enim consequat, eget viverra neque porta.</p>
+
+      </div>
+      <div class="item tabs tabs-secondary tabs-icon-left">
+        <a class="tab-item"> <!--href=""-->
+          <i class="icon ion-thumbsup"></i>
+          Likes (1)
+        </a>
+        <a class="tab-item"> <!--href=""-->
+          <i class="icon ion-chatbox"></i>
+          Comments (3)
+        </a>
+        <a class="tab-item"> <!--href=""-->
+          <i class="icon ion-share"></i>
+          Share
+        </a>
+      </div>
+    </div>
 
   </ion-content>
 </ion-view>

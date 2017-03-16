@@ -1,20 +1,35 @@
 <ion-view>
+  <ion-nav-title>
+    {{title}}
+  </ion-nav-title>
   <ion-content>
-    <form ng-submit="doSearch()">
-      <label class="item item-input item-select">
-          <div class="input-label">
-            Comidas
-          </div>
-          <select ng-model="prueba">
-            <option ng-repeat="pruebaRow in prueba" value="{{pruebaRow.id}}">
-              {{pruebaRow.plato}}
-            </option>
-          </select>
-      </label>
 
-      <label class="item">
-        <button class="button button-block button-positive" type="submit">Buscar</button>
-      </label>
+    <div id="ingredientsPreview">
+      {{chosenIngredientsName}}
+    </div>
+
+    <form>
+      <div class="list ng-scope ng-binding">
+        <label class="item item-input item-select">
+          <div class="input-label">
+            Ingredients
+          </div>
+          <select ng-model="selectedIngredient"
+                  ng-change="addIngredientToList(selectedIngredient)"
+                  ng-options="ingredient.name for ingredient in ingredients"
+          >
+          </select>
+        </label>
+        <label class="item">
+          <button
+            class="button button-block button-positive"
+            on-tap="doSearch()"
+            ui-sref="app.list"
+          >
+            Search!
+          </button>
+        </label>
+      </div>
     </form>
   </ion-content>
 </ion-view>
