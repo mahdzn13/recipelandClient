@@ -1,15 +1,17 @@
-var neo4JDatabaseUrl = 'http://79.157.118.158:8080';
-var mongoDatabaseUrl = 'http://192.168.1.49:3000';
+var neo4JDatabaseUrl = 'http://172.16.6.81:8080';
+var mongoDatabaseUrl = 'http://172.16.5.55:3000';
 
 angular.module('starter.controllers', [])
 
   // Sidemenu
-  .controller('menuCtrl', function ($rootScope, $scope, $http) {
+  .controller('menuCtrl', function ($rootScope, $scope, $http, $state) {
+
+    $scope.username =
 
     $scope.logOut = function() {
       localStorage.removeItem("token");
       $state.go("login");
-    }
+    };
 
     $scope.$on("$ionicView.beforeEnter", function() {
       $scope.verifyToken();
@@ -19,30 +21,15 @@ angular.module('starter.controllers', [])
     $scope.verifyToken = function () {
       $http({
         method: 'GET',
-        //username: $scope.loginData.username,
-        //password: $scope.loginData.password,
         url: mongoDatabaseUrl + '/verify-token' ,
         headers: {
           'Authorization' : localStorage.getItem("token")
         }
       }).then(function (resp) {
-        if (typeof (Storage) !== "undefined") {
-          if (angular.equals(localStorage.getItem("token"),resp.data)) {
-            console.log("Verified motherfucker");
-          } else {
-            $scope.logOut();
-            console.log("You're out retard");
-          }
-
-        } else {
-          console.log("Sorry! Your browser doesn't support web storage.");
-        }
-        console.log(resp.data);
+        console.log("Keep going");
       }, function (resp) {
-        console.log('Error');
-        console.log(resp.data);
+        $scope.logOut();
       });
-      console.log($scope.loginData);
     };
 
 
@@ -52,7 +39,6 @@ angular.module('starter.controllers', [])
   .controller('listCtrl', function ($scope, $rootScope) {
     $scope.savedRecipe = function (recipe) {
       $rootScope.recipe = recipe;
-      console.log("Saving recipe" + recipe)
     }
   })
 
@@ -69,10 +55,8 @@ angular.module('starter.controllers', [])
       url: url
     }).then(function (resp) {
       $scope.recipeList = resp.data;
-      console.log(resp.data);
     }, function (resp) {
       console.log('Error');
-      console.log(resp.data);
     });
   })
 
@@ -87,10 +71,8 @@ angular.module('starter.controllers', [])
       url: url
     }).then(function (resp) {
       $scope.recipeList = resp.data;
-      console.log(resp.data);
     }, function (resp) {
       console.log('Error');
-      console.log(resp.data);
     });
   })
 
@@ -105,15 +87,13 @@ angular.module('starter.controllers', [])
       url: url
     }).then(function (resp) {
       $scope.recipeList = resp.data;
-      console.log(resp.data);
     }, function (resp) {
       console.log('Error');
-      console.log(resp.data);
     });
   })
 
   // Login to the app
-  .controller('loginCtrl', function($scope, $http, $rootScope) {
+  .controller('loginCtrl', function($scope, $http, $rootScope, $state) {
 
     $scope.loginData = {};
 
@@ -126,45 +106,32 @@ angular.module('starter.controllers', [])
                                 'password=' + $scope.loginData.password
       }).then(function (resp) {
         if (typeof (Storage) !== "undefined") {
-          localStorage.setItem("token", "" + resp.data);
+          localStorage.setItem("token", "" + resp.data.split("|")[0]);
           console.log(localStorage.getItem("token"));
+          $scope.neo4jlogin($scope.loginData.username);
         } else {
           console.log("Sorry! Your browser doesn't support web storage.");
         }
       }, function (resp) {
         console.log('Error');
-        console.log(resp.data);
       });
-      console.log($scope.loginData);
     };
-
-    // MongoDB login
-    $scope.mongodblogin = function () {
-
-      // TODO: Albert shiat
-
-    };
-
-    /* Mock pre-login
-    $scope.username = 'mahernandezd'; //TODO change this user
-    $rootScope.username = 'mahernandezd';
-    */
 
     // Neo4J 'login', getting userNodeId
-    $scope.neo4jlogin = function () {
+    $scope.neo4jlogin = function (username) {
 
       // Getting userNodeId
-      var url = neo4JDatabaseUrl + '/getUserNode?username=' + $scope.username;
+      var url = neo4JDatabaseUrl + '/getUserNode?username=' + username;
 
       $http({
         method: 'GET',
         url: url
       }).then(function (resp) {
+        $rootScope.userNode = resp.data;
         $rootScope.userNodeId = resp.data.nodeId;
-        console.log(resp.data);
+        $state.go("app.mainMenu");
       }, function (resp) {
         console.log('Error');
-        console.log(resp.data);
       });
     };
 
@@ -234,7 +201,7 @@ angular.module('starter.controllers', [])
     console.log(url);
 
 
-     var ajaxPetition = function () {
+     var ajaxPetition = function (url) {
      // Ajax petition
        $http({
          method: 'GET',
@@ -255,7 +222,7 @@ angular.module('starter.controllers', [])
   })
 
   // Search controller
-  .controller('searchCtrl', function ($rootScope, $http, $scope, $ionicPopup) {
+  .controller('searchCtrl', function ($rootScope, $http, $scope, $ionicPopup, $state) {
 
     $scope.selectedIngredient = null;
     $scope.ingredients = {};
@@ -298,6 +265,7 @@ angular.module('starter.controllers', [])
       }
       console.log("Mi url:" + url);
       $rootScope.searchUrl = url;
+      $state.go("app.list");
 
     };
 
