@@ -1,4 +1,4 @@
-var neo4JDatabaseUrl = 'http://172.16.6.81:8080';
+var neo4JDatabaseUrl = 'http://192.168.1.36:8080';
 var mongoDatabaseUrl = 'http://172.16.5.55:3000';
 
 angular.module('starter.controllers', [])
@@ -14,7 +14,7 @@ angular.module('starter.controllers', [])
     };
 
     $scope.$on("$ionicView.beforeEnter", function() {
-      $scope.verifyToken();
+      //$scope.verifyToken();
 
     });
 
@@ -28,7 +28,7 @@ angular.module('starter.controllers', [])
       }).then(function (resp) {
         console.log("Keep going");
       }, function (resp) {
-        $scope.logOut();
+        //$scope.logOut();
       });
     };
 
@@ -178,14 +178,14 @@ angular.module('starter.controllers', [])
   })
 
   // randomRecipes controller
-  .controller('randomRecipes', function ($rootScope) {
+  .controller('randomRecipeCtrl', function ($rootScope,$http,$scope) {
+    console.log(neo4JDatabaseUrl + '/getAllRecipes');
     $http({
       method: 'GET',
       url: neo4JDatabaseUrl + '/getAllRecipes'
     }).then(function (resp) {
-      var random = Math.floor(Math.random() * resp.data.length());
+      var random = Math.floor(Math.random() * resp.data.length);
       $scope.recipe = resp.data[random];
-      console.log(resp.data);
     }, function (resp) {
       console.log('Error');
       console.log(resp.data);
