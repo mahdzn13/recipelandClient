@@ -126,7 +126,15 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
-
+    .state('app.comment', {
+      url: '/comment',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/commentList.html',
+          controller: 'commentListCtrl'
+        }
+      }
+    })
     .state('login', {
       url: '/login',
       templateUrl: 'templates/login.html',

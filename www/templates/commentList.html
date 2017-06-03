@@ -1,0 +1,26 @@
+<ion-view>
+  <ion-nav-title>
+    {{title}}
+  </ion-nav-title>
+  <ion-content>
+    <div ng-controller="listCtrl" class="list">
+      <a ng-repeat="recipe in recipeList"
+         class="item item-thumbnail-left"
+         on-tap="savedRecipe({{recipe}})"
+         href="#/app/recipe"
+      >
+        <img ng-src="{{recipe.image}}">
+        <h2>{{ recipe.name }}</h2>
+        <h4>by admin</h4>
+      </a>
+
+    </div>
+
+    <!--
+    Imagen de la card
+    <div class="item item-image">
+      <img src="http://www.chicospl.com/wp-content/uploads/2013/12/shutterstock_94575220-300x300.jpg">
+    </div>-->
+
+  </ion-content>
+</ion-view>

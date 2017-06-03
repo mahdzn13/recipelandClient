@@ -4,9 +4,7 @@
   </ion-nav-title>
   <ion-content>
 
-    <div id="ingredientsPreview">
-      {{chosenIngredientsName}}
-    </div>
+
 
     <form>
       <div class="list ng-scope ng-binding">
@@ -30,5 +28,15 @@
         </label>
       </div>
     </form>
+    <div id="ingredientsPreview">
+      <div class="item item-divider">
+        Selected ingredients
+      </div>
+      <ul class="list">
+        <li class="item" ng-repeat="chosenIngredientName in chosenIngredientsName">
+          {{chosenIngredientName}}
+        </li>
+      </ul>
+    </div>
   </ion-content>
 </ion-view>

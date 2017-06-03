@@ -1,4 +1,4 @@
-var neo4JDatabaseUrl = 'http://192.168.1.36:8080';
+var neo4JDatabaseUrl = 'http://192.168.1.39:8080';
 var mongoDatabaseUrl = 'http://172.16.5.55:3000';
 
 angular.module('starter.controllers', [])
@@ -6,7 +6,7 @@ angular.module('starter.controllers', [])
   // Sidemenu
   .controller('menuCtrl', function ($rootScope, $scope, $http, $state) {
 
-    $scope.username =
+    $scope.username = "";
 
     $scope.logOut = function() {
       localStorage.removeItem("token");
@@ -98,6 +98,8 @@ angular.module('starter.controllers', [])
     $scope.loginData = {};
 
     $scope.doLogin = function () {
+      //Line must be deleted on live environment
+      $scope.neo4jlogin($scope.loginData.username);
       $http({
         method: 'GET',
         //username: $scope.loginData.username,
@@ -108,6 +110,7 @@ angular.module('starter.controllers', [])
         if (typeof (Storage) !== "undefined") {
           localStorage.setItem("token", "" + resp.data.split("|")[0]);
           console.log(localStorage.getItem("token"));
+          // Functional -> $scope.neo4jlogin($scope.loginData.username);
           $scope.neo4jlogin($scope.loginData.username);
         } else {
           console.log("Sorry! Your browser doesn't support web storage.");
@@ -221,6 +224,22 @@ angular.module('starter.controllers', [])
 
   })
 
+  .controller('commentListCtrl', function($scope, $http, $rootScope) {
+    //$scope.recipeList = {};
+    //$scope.title = 'Favourite Recipes';
+
+    //var url = neo4JDatabaseUrl + '/getFavedRecipes?userNodeId=' + $rootScope.userNodeId;
+
+    /*$http({
+      method: 'GET',
+      url: url
+    }).then(function (resp) {
+      $scope.recipeList = resp.data;
+    }, function (resp) {
+      console.log('Error');
+    });*/
+  })
+
   // Search controller
   .controller('searchCtrl', function ($rootScope, $http, $scope, $ionicPopup, $state) {
 
@@ -231,11 +250,13 @@ angular.module('starter.controllers', [])
     $scope.chosenIngredientsName = [];
     $scope.recipeList = [];
 
+
     $scope.addIngredientToList = function (ingredient) {
       if ($scope.chosenIngredientsId.length < 7) {
         $scope.chosenIngredientsId.push(ingredient.nodeId);
         $scope.chosenIngredientsName.push(ingredient.name);
         console.log('ingredient: '+ ingredient.name);
+        console.log($scope.chosenIngredientsName);
       } else {
         $ionicPopup.show({
           title: 'Too many ingredients!',
