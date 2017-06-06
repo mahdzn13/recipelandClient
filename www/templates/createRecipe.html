@@ -1,45 +1,51 @@
 <ion-view title="Create {{recipeTitle}}">
-<div class="list margin-top-40">
-  <!-- Title of the recipe -->
-  <label class="item item-input item-stacked-label">
-    <span class="input-label">Title</span>
-    <input type="text" placeholder="Potatoes in Pyjamas" ng-model="recipeTitle">
-  </label>
-  <!-- Image for the recipe -->
-  <label class="item item-input item-floating-label">
-    <span class="input-label">IMG Link</span>
-    <input type="text" placeholder="IMG Link" ng-model="imgLink">
-  </label>
-  <img class="full-image" src="{{imgLink}}"></img>
-  <!-- Ingredients for the recipe-->
-  <h3>Ingredients</h3>
-  <div class="item item-input-inset">
-    <label class="item-input-wrapper">
-      <input id="ingredientInsert" type="text" placeholder="Ingredient">
-    </label>
-    <button on-tap="addIngredientToList()" class="button button-small">
-      <i class="icon ion-plus-circled placeholder-icon"></i>
-    </button>
-  </div>
-  <div id="ingredientsPreview">
-    <div class="item item-divider">
-      Ingredient List
-    </div>
-    <ul class="list">
-      <div class="item item-button-right" ng-repeat="ingredient in listOfIngredients">
-        {{ingredient}}
-        <button class="button button-stable" on-tap="removeElementFromArray('{{ingredient}}')">
-          <i class="icon ion-close-circled placeholder-icon"></i>
+  <ion-scroll direction="y" style="height:600px;">
+    <div class="list margin-top-40">
+      <!-- Title of the recipe -->
+      <label class="item item-input item-stacked-label">
+        <span class="input-label">Title</span>
+        <input type="text" placeholder="Potatoes in Pyjamas" ng-model="$parent.recipeTitle">
+      </label>
+      <!-- Image for the recipe -->
+      <label class="item item-input item-floating-label">
+        <span class="input-label">IMG Link</span>
+        <input type="text" placeholder="IMG Link" ng-model="imgLink">
+      </label>
+      <img class="full-image" src="{{imgLink}}"></img>
+      <!-- Ingredients for the recipe-->
+      <h3>Ingredients</h3>
+      <div class="item item-input-inset">
+        <label class="item-input-wrapper">
+          <input id="ingredientInsert" type="text" placeholder="Ingredient">
+        </label>
+        <button on-tap="addIngredientToList()" class="button button-small">
+          <i class="icon ion-plus-circled placeholder-icon"></i>
         </button>
       </div>
-    </ul>
-  </div>
-  <!-- Steps of the recipe-->
-  <div class="item item-divider">
-    Preparation
-  </div>
-  <label class="item item-input">
-    <textarea placeholder="Describe steps of the recipe"></textarea>
-  </label>
-</div>
+      <div id="ingredientsPreview">
+        <div class="item item-divider">
+          Ingredient List
+        </div>
+        <ul class="list">
+          <div class="item item-button-right" ng-repeat="ingredient in $parent.listOfIngredients">
+            {{ingredient}}
+            <button class="button button-stable" on-tap="removeElementFromArray('{{ingredient}}')">
+              <i class="icon ion-close-circled placeholder-icon"></i>
+            </button>
+          </div>
+        </ul>
+      </div>
+      <!-- Steps of the recipe-->
+      <div class="item item-divider">
+        Preparation
+      </div>
+      <label class="item item-input">
+        <textarea id="recipeText" placeholder="Describe steps of the recipe" rows="4" ng-model="$parent.recipeText"></textarea>
+      </label>
+    </div>
+    <button class="button button-full button-positive margin-bottom-40" on-tap="createRecipe()">
+      Create recipe!
+    </button>
+  </ion-scroll>
+
 </ion-view>

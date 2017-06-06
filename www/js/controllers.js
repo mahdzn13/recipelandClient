@@ -1,7 +1,51 @@
 var neo4JDatabaseUrl = 'http://192.168.1.33:8080';
 var mongoDatabaseUrl = 'http://172.16.5.55:3000';
 
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', [], function($httpProvider) {
+  // Use x-www-form-urlencoded Content-Type
+  $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+
+  /**
+   * The workhorse; converts an object to x-www-form-urlencoded serialization.
+   * @param {Object} obj
+   * @return {String}
+   */
+  var param = function(obj) {
+    var query = '', name, value, fullSubName, subName, subValue, innerObj, i;
+
+    for(name in obj) {
+      value = obj[name];
+
+      if(value instanceof Array) {
+        for(i=0; i<value.length; ++i) {
+          subValue = value[i];
+          fullSubName = name + '[' + i + ']';
+          innerObj = {};
+          innerObj[fullSubName] = subValue;
+          query += param(innerObj) + '&';
+        }
+      }
+      else if(value instanceof Object) {
+        for(subName in value) {
+          subValue = value[subName];
+          fullSubName = name + '[' + subName + ']';
+          innerObj = {};
+          innerObj[fullSubName] = subValue;
+          query += param(innerObj) + '&';
+        }
+      }
+      else if(value !== undefined && value !== null)
+        query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
+    }
+
+    return query.length ? query.substr(0, query.length - 1) : query;
+  };
+
+  // Override $http service's default transformRequest
+  $httpProvider.defaults.transformRequest = [function(data) {
+    return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
+  }];
+})
 
   // Sidemenu
   .controller('menuCtrl', function ($rootScope, $scope, $http, $state) {
@@ -241,11 +285,12 @@ angular.module('starter.controllers', [])
   .controller('createRecipeCtrl', function($scope, $http, $rootScope) {
     $scope.imgLink = "https://image.flaticon.com/icons/svg/431/431569.svg";
     $scope.recipeTitle = "";
+    $scope.recipeText = "";
     $scope.listOfIngredients = [];
+
     $scope.addIngredientToList = function (){
       var element = angular.element( document.querySelector( '#ingredientInsert' ) );
       var duplicated = isOnList(element.val());
-      console.log(duplicated);
       if (!duplicated){
         $scope.listOfIngredients.push(element.val());
         element.val("");
@@ -265,16 +310,28 @@ angular.module('starter.controllers', [])
     $scope.removeElementFromArray = function (name){
       $scope.listOfIngredients.splice($scope.listOfIngredients.indexOf(name), 1);
     }
-    //$rootScope.recipe;
-    //$rootScope.userNodeId;
-    //$scope.title = 'Comments for ' + $rootScope.recipe.name;
-    /*$http.get(neo4JDatabaseUrl + '/getAllCommentsFromRecipe?recipeNodeId=' + $rootScope.recipe.nodeId)
+
+    //Ajax for the creation of the recipe
+    $scope.createRecipe = function(){
+      var sendData = {
+        "recipeName": $scope.recipeTitle,
+        "recipeImage": $scope.imgLink,
+        "recipeText": $scope.recipeText,
+        "ingredientArray": $scope.listOfIngredients,
+      };
+      $http.post(
+        neo4JDatabaseUrl + '/createRecipe',
+        sendData
+      )
       .success(function(data, status, headers, config) {
-          $scope.commentList = data;
-          console.log(data);
-      }).error(function(data, status, headers, config) {
-          console.log(status);
-      });*/
+        $scope.data = data;
+        console.log(sendData);
+      })
+      .error(function(data, status, headers, config) {
+        console.log(sendData);
+        $scope.status = status;
+      });
+    }
   })
 
   // Search controller
