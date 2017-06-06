@@ -3,17 +3,13 @@
     {{title}}
   </ion-nav-title>
   <ion-content>
-    <div ng-controller="listCtrl" class="list">
-      <a ng-repeat="recipe in recipeList"
-         class="item item-thumbnail-left"
-         on-tap="savedRecipe({{recipe}})"
-         href="#/app/recipe"
-      >
-        <img ng-src="{{recipe.image}}">
-        <h2>{{ recipe.name }}</h2>
-        <h4>by admin</h4>
+    <div class="list">
+      <a ng-repeat="comment in commentList"
+        class="item item-avatar" href="#">
+        <img src="http://antigaweb.esliceu.com/bin/aNtZjY5fqHo.jpg" style="width:50px;height:50px;">
+        <h2>Pnegre</h2>
+        <p>{{comment.text}}</p>
       </a>
-
     </div>
 
     <!--

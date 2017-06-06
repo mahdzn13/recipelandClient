@@ -1,1 +1,34 @@
 /* Empty. Add your own CSS if you like */
+@font-face {
+    font-family: 'birdsOfParadise';
+    src: url('../resources/fonts/birdsOfParadise.ttf') format('truetype'),
+          url('../resources/fonts/birdsofparadise-webfont.woff2') format('woff2'),
+          url('../resources/fonts/birdsofparadise-webfont.woff') format('woff');
+}
+
+.bar,
+[nav-bar-transition=ios] [nav-bar=active] .bar,
+.bar.bar-stable .title,
+.menu .bar-header{
+  background-color: #5A9DF7;
+}
+
+.bar .title,
+.bar-stable .button.button-icon,
+.bar.bar-stable .title,
+.item-divider{
+  color: #fff;
+  font-weight: 800;
+}
+
+.item-divider{
+  background-color: #79AFF7;
+}
+
+.title {
+  font-family: "birdsOfParadise";
+}
+
+.margin-top-40 {
+    margin-top: 40px !important;
+}

@@ -1,4 +1,4 @@
-var neo4JDatabaseUrl = 'http://192.168.1.39:8080';
+var neo4JDatabaseUrl = 'http://192.168.1.33:8080';
 var mongoDatabaseUrl = 'http://172.16.5.55:3000';
 
 angular.module('starter.controllers', [])
@@ -178,6 +178,7 @@ angular.module('starter.controllers', [])
   // Recipes controller
   .controller('recipeCtrl', function ($rootScope) {
     console.log($rootScope.savedRecipe);
+    console.log($rootScope.recipe);
   })
 
   // randomRecipes controller
@@ -225,19 +226,55 @@ angular.module('starter.controllers', [])
   })
 
   .controller('commentListCtrl', function($scope, $http, $rootScope) {
-    //$scope.recipeList = {};
-    //$scope.title = 'Favourite Recipes';
+    $rootScope.recipe;
+    $rootScope.userNodeId;
+    $scope.title = 'Comments for ' + $rootScope.recipe.name;
+    $http.get(neo4JDatabaseUrl + '/getAllCommentsFromRecipe?recipeNodeId=' + $rootScope.recipe.nodeId)
+      .success(function(data, status, headers, config) {
+          $scope.commentList = data;
+          console.log(data);
+      }).error(function(data, status, headers, config) {
+          console.log(status);
+      });
+  })
 
-    //var url = neo4JDatabaseUrl + '/getFavedRecipes?userNodeId=' + $rootScope.userNodeId;
-
-    /*$http({
-      method: 'GET',
-      url: url
-    }).then(function (resp) {
-      $scope.recipeList = resp.data;
-    }, function (resp) {
-      console.log('Error');
-    });*/
+  .controller('createRecipeCtrl', function($scope, $http, $rootScope) {
+    $scope.imgLink = "https://image.flaticon.com/icons/svg/431/431569.svg";
+    $scope.recipeTitle = "";
+    $scope.listOfIngredients = [];
+    $scope.addIngredientToList = function (){
+      var element = angular.element( document.querySelector( '#ingredientInsert' ) );
+      var duplicated = isOnList(element.val());
+      console.log(duplicated);
+      if (!duplicated){
+        $scope.listOfIngredients.push(element.val());
+        element.val("");
+      }
+    };
+    //Returns true if it finds a duplicated
+    function isOnList(duplicate){
+      for (currentIngredient in $scope.listOfIngredients) {
+        console.log("c: " + currentIngredient);
+        console.log("d: " + duplicate);
+        if ($scope.listOfIngredients[currentIngredient] === duplicate){
+          return true;
+        }
+      }
+      return false;
+    }
+    $scope.removeElementFromArray = function (name){
+      $scope.listOfIngredients.splice($scope.listOfIngredients.indexOf(name), 1);
+    }
+    //$rootScope.recipe;
+    //$rootScope.userNodeId;
+    //$scope.title = 'Comments for ' + $rootScope.recipe.name;
+    /*$http.get(neo4JDatabaseUrl + '/getAllCommentsFromRecipe?recipeNodeId=' + $rootScope.recipe.nodeId)
+      .success(function(data, status, headers, config) {
+          $scope.commentList = data;
+          console.log(data);
+      }).error(function(data, status, headers, config) {
+          console.log(status);
+      });*/
   })
 
   // Search controller
