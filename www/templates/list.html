@@ -7,7 +7,6 @@
       <a ng-repeat="recipe in recipeList"
          class="item item-thumbnail-left"
          on-tap="savedRecipe({{recipe}})"
-         href="#/app/recipe"
       >
         <img ng-src="{{recipe.image}}">
         <h2>{{ recipe.name }}</h2>

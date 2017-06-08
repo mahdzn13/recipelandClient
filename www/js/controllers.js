@@ -70,7 +70,6 @@ angular.module('starter.controllers', [], function($httpProvider) {
           'Authorization' : localStorage.getItem("token")
         }
       }).then(function (resp) {
-        console.log("Keep going");
       }, function (resp) {
         //$scope.logOut();
       });
@@ -80,9 +79,10 @@ angular.module('starter.controllers', [], function($httpProvider) {
   })
 
   // Global list controller
-  .controller('listCtrl', function ($scope, $rootScope) {
+  .controller('listCtrl', function ($scope, $rootScope, $state,$http) {
     $scope.savedRecipe = function (recipe) {
       $rootScope.recipe = recipe;
+      $state.go("app.recipe");
     }
   })
 
@@ -92,7 +92,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
     $scope.title = 'Blacklist';
 
     var url = neo4JDatabaseUrl + '/getBlacklistedRecipes?userNodeId=' + $rootScope.userNodeId;
-    console.log(url);
+
 
     $http({
       method: 'GET',
@@ -100,7 +100,6 @@ angular.module('starter.controllers', [], function($httpProvider) {
     }).then(function (resp) {
       $scope.recipeList = resp.data;
     }, function (resp) {
-      console.log('Error');
     });
   })
 
@@ -116,7 +115,6 @@ angular.module('starter.controllers', [], function($httpProvider) {
     }).then(function (resp) {
       $scope.recipeList = resp.data;
     }, function (resp) {
-      console.log('Error');
     });
   })
 
@@ -132,7 +130,6 @@ angular.module('starter.controllers', [], function($httpProvider) {
     }).then(function (resp) {
       $scope.recipeList = resp.data;
     }, function (resp) {
-      console.log('Error');
     });
   })
 
@@ -153,14 +150,12 @@ angular.module('starter.controllers', [], function($httpProvider) {
       }).then(function (resp) {
         if (typeof (Storage) !== "undefined") {
           localStorage.setItem("token", "" + resp.data.split("|")[0]);
-          console.log(localStorage.getItem("token"));
           // Functional -> $scope.neo4jlogin($scope.loginData.username);
           $scope.neo4jlogin($scope.loginData.username);
         } else {
           console.log("Sorry! Your browser doesn't support web storage.");
         }
       }, function (resp) {
-        console.log('Error');
       });
     };
 
@@ -178,7 +173,6 @@ angular.module('starter.controllers', [], function($httpProvider) {
         $rootScope.userNodeId = resp.data.nodeId;
         $state.go("app.mainMenu");
       }, function (resp) {
-        console.log('Error');
       });
     };
 
@@ -200,10 +194,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
       url: neo4JDatabaseUrl + '/getAllAllergies'
     }).then(function (resp) {
       $scope.allAllergies = resp.data;
-      console.log(resp.data);
     }, function (resp) {
-      console.log('Error');
-      console.log(resp.data);
     });
 
     $http({
@@ -211,23 +202,37 @@ angular.module('starter.controllers', [], function($httpProvider) {
       url: neo4JDatabaseUrl + '/getUserAllergies?userNodeId=' + $rootScope.userNodeId
     }).then(function (resp) {
       $scope.allergies = resp.data;
-      console.log(resp.data);
     }, function (resp) {
-      console.log('Error');
-      console.log(resp.data);
     });
 
   })
 
   // Recipes controller
-  .controller('recipeCtrl', function ($rootScope) {
-    console.log($rootScope.savedRecipe);
-    console.log($rootScope.recipe);
+  .controller('recipeCtrl', function ($rootScope, $scope,$http) {
+    $scope.commentCount = 0;
+
+    $http.get(neo4JDatabaseUrl + '/getAllCountOfCommentsFromRecipe?recipeNodeId=' + $rootScope.recipe.nodeId)
+      .success(function(data, status, headers, config) {
+          $scope.commentCount = data;
+      }).error(function(data, status, headers, config) {
+      });
+  })
+
+  // Controller for user created recipes
+  .controller('myRecipesCtrl', function ($rootScope,$http,$scope) {
+    $scope.title = "My recipe book";
+    $http({
+      method: 'GET',
+      url: neo4JDatabaseUrl + '/getCreatedRecipes?userNodeId=' + $rootScope.userNodeId
+    }).then(function (resp) {
+      $scope.recipeList = resp.data;
+    }, function (resp) {
+
+    });
   })
 
   // randomRecipes controller
   .controller('randomRecipeCtrl', function ($rootScope,$http,$scope) {
-    console.log(neo4JDatabaseUrl + '/getAllRecipes');
     $http({
       method: 'GET',
       url: neo4JDatabaseUrl + '/getAllRecipes'
@@ -235,8 +240,6 @@ angular.module('starter.controllers', [], function($httpProvider) {
       var random = Math.floor(Math.random() * resp.data.length);
       $scope.recipe = resp.data[random];
     }, function (resp) {
-      console.log('Error');
-      console.log(resp.data);
     });
   })
 
@@ -246,7 +249,6 @@ angular.module('starter.controllers', [], function($httpProvider) {
     $scope.title = 'Recipe list';
 
     var url = $rootScope.searchUrl;
-    console.log(url);
 
 
      var ajaxPetition = function (url) {
@@ -257,11 +259,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
        }).then(function (resp) {
          // Save recipes
          $scope.recipeList = resp.data;
-         console.log('Returning search recipe list');
-         console.log(resp.data);
        }, function (resp) {
-         console.log('Error');
-         console.log(resp.data);
        });
      };
      ajaxPetition(url);
@@ -271,23 +269,25 @@ angular.module('starter.controllers', [], function($httpProvider) {
 
   .controller('commentListCtrl', function($scope, $http, $rootScope) {
     $rootScope.recipe;
-    $rootScope.userNodeId;
+    $scope.commentList = "";
     $scope.title = 'Comments for ' + $rootScope.recipe.name;
+
+
     $http.get(neo4JDatabaseUrl + '/getAllCommentsFromRecipe?recipeNodeId=' + $rootScope.recipe.nodeId)
       .success(function(data, status, headers, config) {
           $scope.commentList = data;
-          console.log(data);
       }).error(function(data, status, headers, config) {
           console.log(status);
       });
   })
 
-  .controller('createRecipeCtrl', function($scope, $http, $rootScope) {
+  .controller('createRecipeCtrl', function($scope, $http, $rootScope, $ionicScrollDelegate) {
     $scope.imgLink = "https://image.flaticon.com/icons/svg/431/431569.svg";
     $scope.recipeTitle = "";
     $scope.recipeText = "";
     $scope.listOfIngredients = [];
 
+    //Adds an ingredient to the list used to in preview
     $scope.addIngredientToList = function (){
       var element = angular.element( document.querySelector( '#ingredientInsert' ) );
       var duplicated = isOnList(element.val());
@@ -295,12 +295,13 @@ angular.module('starter.controllers', [], function($httpProvider) {
         $scope.listOfIngredients.push(element.val());
         element.val("");
       }
+      
+
     };
+
     //Returns true if it finds a duplicated
     function isOnList(duplicate){
       for (currentIngredient in $scope.listOfIngredients) {
-        console.log("c: " + currentIngredient);
-        console.log("d: " + duplicate);
         if ($scope.listOfIngredients[currentIngredient] === duplicate){
           return true;
         }
@@ -309,6 +310,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
     }
     $scope.removeElementFromArray = function (name){
       $scope.listOfIngredients.splice($scope.listOfIngredients.indexOf(name), 1);
+
     }
 
     //Ajax for the creation of the recipe
@@ -317,6 +319,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
         "recipeName": $scope.recipeTitle,
         "recipeImage": $scope.imgLink,
         "recipeText": $scope.recipeText,
+        "userId": $rootScope.userNodeId,
         "ingredientArray": $scope.listOfIngredients,
       };
       $http.post(
@@ -325,10 +328,8 @@ angular.module('starter.controllers', [], function($httpProvider) {
       )
       .success(function(data, status, headers, config) {
         $scope.data = data;
-        console.log(sendData);
       })
       .error(function(data, status, headers, config) {
-        console.log(sendData);
         $scope.status = status;
       });
     }
@@ -341,16 +342,18 @@ angular.module('starter.controllers', [], function($httpProvider) {
     $scope.ingredients = {};
 
     $scope.chosenIngredientsId = [];
-    $scope.chosenIngredientsName = [];
+    $scope.chosenIngredients = [];
     $scope.recipeList = [];
-
 
     $scope.addIngredientToList = function (ingredient) {
       if ($scope.chosenIngredientsId.length < 7) {
-        $scope.chosenIngredientsId.push(ingredient.nodeId);
-        $scope.chosenIngredientsName.push(ingredient.name);
-        console.log('ingredient: '+ ingredient.name);
-        console.log($scope.chosenIngredientsName);
+        var duplicatedNodeId = isOnChosenIdList(ingredient.nodeId);
+
+        if (!duplicatedNodeId){
+          $scope.chosenIngredients.push(ingredient);
+          $scope.chosenIngredientsId.push(ingredient.nodeId);
+        }
+
       } else {
         $ionicPopup.show({
           title: 'Too many ingredients!',
@@ -362,8 +365,29 @@ angular.module('starter.controllers', [], function($httpProvider) {
       }
     };
 
+    //Returns true if it finds a duplicated
+    function isOnChosenIdList(duplicate){
+      for (chosenIngredientPos in $scope.chosenIngredientsId) {
+        if ($scope.chosenIngredientsId[chosenIngredientPos] === duplicate){
+          return true;
+        }
+      }
+      return false;
+    }
+
+    //Remove elemento from arrays
+    $scope.removeElementFromArray = function (recipe){
+      for (var i= 0; i < $scope.chosenIngredients.length; i++){
+        if ($scope.chosenIngredients[i].nodeId === recipe.nodeId){
+          $scope.chosenIngredients.splice(i, 1);
+          break;
+        }
+      }
+      $scope.chosenIngredientsId.splice($scope.chosenIngredientsId.indexOf(recipe.nodeId), 1);
+
+    }
+
     $scope.doSearch = function () {
-      console.log();
       var url = neo4JDatabaseUrl + '/getRecipesWithIngredientsAndSubstitutes?';
 
       // Formatting the query
@@ -378,7 +402,6 @@ angular.module('starter.controllers', [], function($httpProvider) {
           url += '&';
         }
       }
-      console.log("Mi url:" + url);
       $rootScope.searchUrl = url;
       $state.go("app.list");
 
@@ -389,10 +412,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
       url: neo4JDatabaseUrl + '/getAllIngredients'
     }).then(function (resp) {
       $scope.ingredients = resp.data;
-      console.log(resp.data);
     }, function (resp) {
-      console.log('Error');
-      console.log(resp.data);
     });
   })
 

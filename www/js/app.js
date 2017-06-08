@@ -144,6 +144,15 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
+    .state('app.myRecipes', {
+      url: '/myRecipes',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/list.html',
+          controller: 'myRecipesCtrl'
+        }
+      }
+    })
     .state('login', {
       url: '/login',
       templateUrl: 'templates/login.html',

@@ -9,9 +9,9 @@
       <!-- Image for the recipe -->
       <label class="item item-input item-floating-label">
         <span class="input-label">IMG Link</span>
-        <input type="text" placeholder="IMG Link" ng-model="imgLink">
+        <input type="text" placeholder="IMG Link" ng-model="$parent.imgLink">
       </label>
-      <img class="full-image" src="{{imgLink}}"></img>
+      <img class="full-image" src="{{$parent.imgLink}}"></img>
       <!-- Ingredients for the recipe-->
       <h3>Ingredients</h3>
       <div class="item item-input-inset">

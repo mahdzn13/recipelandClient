@@ -7,7 +7,7 @@
       <div class="item item-body">
 
         <img class="full-image" src="{{recipe.image}}">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis scelerisque velit non varius tempor. Maecenas non tempus nibh, vitae condimentum magna. Cras sed odio hendrerit, luctus justo sed, bibendum diam. Morbi non tortor porttitor, consectetur diam ornare, tincidunt dui. Aliquam luctus ante nec sapien hendrerit rhoncus ac a massa. Cras a lobortis nulla. Maecenas faucibus tellus tortor, sed facilisis quam ullamcorper id. Phasellus blandit rhoncus ipsum vel molestie. Pellentesque laoreet, sapien sed consectetur consequat, tortor massa ultrices purus, id tempor nibh quam ac dui. Aliquam faucibus leo vitae lacus semper molestie. Maecenas porttitor ac diam at suscipit. Aliquam et est id turpis scelerisque tincidunt ut sit amet nulla. Sed ut orci vel erat fermentum porttitor et non enim. Vestibulum efficitur ex id massa ullamcorper, id viverra ante lacinia. Nulla ultricies arcu a enim consequat, eget viverra neque porta.</p>
+        <p style="white-space: pre;">{{recipe.recipeText}}</p>
 
       </div>
       <div class="item tabs tabs-secondary tabs-icon-left">
@@ -17,7 +17,7 @@
         </a>
         <a class="tab-item" href='#/app/comment'>
           <i class="icon ion-chatbox"></i>
-          Comments (3)
+          Comments ({{commentCount}})
         </a>
         <a class="tab-item"> <!--href=""-->
           <i class="icon ion-share"></i>

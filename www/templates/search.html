@@ -33,9 +33,12 @@
         Selected ingredients
       </div>
       <ul class="list">
-        <li class="item" ng-repeat="chosenIngredientName in chosenIngredientsName">
-          {{chosenIngredientName}}
-        </li>
+        <div class="item item-button-right" ng-repeat="ingredient in chosenIngredients">
+          {{ingredient.name}}
+          <button class="button button-stable" on-tap="removeElementFromArray({{ingredient}})">
+            <i class="icon ion-close-circled placeholder-icon"></i>
+          </button>
+        </div>
       </ul>
     </div>
   </ion-content>
