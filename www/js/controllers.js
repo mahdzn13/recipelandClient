@@ -1,5 +1,5 @@
-var neo4JDatabaseUrl = 'http://192.168.1.33:8080';
-var mongoDatabaseUrl = 'http://172.16.5.55:3000';
+var neo4JDatabaseUrl = 'http://192.168.1.48:8080';
+var mongoDatabaseUrl = 'http://192.168.1.53:3000';
 
 angular.module('starter.controllers', [], function($httpProvider) {
   // Use x-www-form-urlencoded Content-Type
@@ -58,8 +58,8 @@ angular.module('starter.controllers', [], function($httpProvider) {
     };
 
     $scope.$on("$ionicView.beforeEnter", function() {
+      //activateComment
       //$scope.verifyToken();
-
     });
 
     $scope.verifyToken = function () {
@@ -70,8 +70,9 @@ angular.module('starter.controllers', [], function($httpProvider) {
           'Authorization' : localStorage.getItem("token")
         }
       }).then(function (resp) {
+
       }, function (resp) {
-        //$scope.logOut();
+        $scope.logOut();
       });
     };
 
@@ -93,12 +94,12 @@ angular.module('starter.controllers', [], function($httpProvider) {
 
     var url = neo4JDatabaseUrl + '/getBlacklistedRecipes?userNodeId=' + $rootScope.userNodeId;
 
-
     $http({
       method: 'GET',
       url: url
     }).then(function (resp) {
-      $scope.recipeList = resp.data;
+      $scope.createdBy = resp.data.user.name;
+      $scope.recipeList = resp.data.recipe;
     }, function (resp) {
     });
   })
@@ -113,7 +114,8 @@ angular.module('starter.controllers', [], function($httpProvider) {
       method: 'GET',
       url: url
     }).then(function (resp) {
-      $scope.recipeList = resp.data;
+      $scope.createdBy = resp.data.user.name;
+      $scope.recipeList = resp.data.recipe;
     }, function (resp) {
     });
   })
@@ -121,6 +123,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
   .controller('seelaterCtrl', function($scope, $http, $rootScope) {
     $scope.recipeList = {};
     $scope.title = 'See later';
+    $scope.seeLater = true;
 
     var url = neo4JDatabaseUrl + '/getSeeLaterRecipes?userNodeId=' + $rootScope.userNodeId;
 
@@ -128,7 +131,8 @@ angular.module('starter.controllers', [], function($httpProvider) {
       method: 'GET',
       url: url
     }).then(function (resp) {
-      $scope.recipeList = resp.data;
+      $scope.createdBy = resp.data.user.name;
+      $scope.recipeList = resp.data.recipe;
     }, function (resp) {
     });
   })
@@ -139,23 +143,27 @@ angular.module('starter.controllers', [], function($httpProvider) {
     $scope.loginData = {};
 
     $scope.doLogin = function () {
+      //deactivateComment
       //Line must be deleted on live environment
       $scope.neo4jlogin($scope.loginData.username);
       $http({
         method: 'GET',
-        //username: $scope.loginData.username,
-        //password: $scope.loginData.password,
+        username: $scope.loginData.username,
+        password: $scope.loginData.password,
         url: mongoDatabaseUrl + '/token-local?username=' + $scope.loginData.username +'&' +
                                 'password=' + $scope.loginData.password
       }).then(function (resp) {
         if (typeof (Storage) !== "undefined") {
           localStorage.setItem("token", "" + resp.data.split("|")[0]);
+          //activateComment
           // Functional -> $scope.neo4jlogin($scope.loginData.username);
-          $scope.neo4jlogin($scope.loginData.username);
+          //$scope.neo4jlogin($scope.loginData.username);
         } else {
           console.log("Sorry! Your browser doesn't support web storage.");
         }
       }, function (resp) {
+        console.log("error");
+        console.log(resp.data);
       });
     };
 
@@ -215,17 +223,23 @@ angular.module('starter.controllers', [], function($httpProvider) {
       .success(function(data, status, headers, config) {
           $scope.commentCount = data;
       }).error(function(data, status, headers, config) {
+
       });
   })
 
   // Controller for user created recipes
   .controller('myRecipesCtrl', function ($rootScope,$http,$scope) {
     $scope.title = "My recipe book";
+    $scope.myRecipe = true;
+
     $http({
       method: 'GET',
       url: neo4JDatabaseUrl + '/getCreatedRecipes?userNodeId=' + $rootScope.userNodeId
     }).then(function (resp) {
-      $scope.recipeList = resp.data;
+      console.log(resp.data);
+      console.log(resp.data.recipe);
+      $scope.createdBy = resp.data.user.name;
+      $scope.recipeList = resp.data.recipe;
     }, function (resp) {
 
     });
@@ -240,16 +254,74 @@ angular.module('starter.controllers', [], function($httpProvider) {
       var random = Math.floor(Math.random() * resp.data.length);
       $scope.recipe = resp.data[random];
     }, function (resp) {
+
     });
   })
 
   // Marco please, stop touching ma code bitch
   .controller('searchListCtrl', function($scope, $http, $rootScope) {
     $scope.recipeList = {};
-    $scope.title = 'Recipe list';
+    $scope.title = 'Search results';
+    $scope.search = true;
 
     var url = $rootScope.searchUrl;
-
+    /**
+    * Receiver position of the item and action
+    **/
+    $scope.addTo = function (pos,action) {
+      console.log($rootScope.userNodeId);
+      console.log($scope.recipeList[pos].nodeId);
+      if ( action === "favourite"){
+        //Favourite recipe
+        var sendData = {
+          recipeNodeId: $scope.recipeList[pos].nodeId,
+          userNodeId: $rootScope.userNodeId,
+        };
+        console.log(sendData);
+        $http.post(
+          neo4JDatabaseUrl + '/userFavedRecipe',
+          sendData
+        )
+        .success(function(data, status, headers, config) {
+          $scope.data = data;
+        })
+        .error(function(data, status, headers, config) {
+          $scope.status = status;
+        });
+      } else if ( action === "seelater"){
+        //See later recipe
+        var sendData = {
+          recipeNodeId: $scope.recipeList[pos].nodeId,
+          userNodeId: $rootScope.userNodeId,
+        };
+        $http.post(
+          neo4JDatabaseUrl + '/userSeeLaterRecipe',
+          sendData
+        )
+        .success(function(data, status, headers, config) {
+          $scope.data = data;
+        })
+        .error(function(data, status, headers, config) {
+          $scope.status = status;
+        });
+      } else if ( action === "blacklist"){
+        //Blacklist recipe
+        var sendData = {
+          recipeNodeId: $scope.recipeList[pos].nodeId,
+          userNodeId: $rootScope.userNodeId,
+        };
+        $http.post(
+          neo4JDatabaseUrl + '/userBlacklistedRecipe',
+          sendData
+        )
+        .success(function(data, status, headers, config) {
+          $scope.data = data;
+        })
+        .error(function(data, status, headers, config) {
+          $scope.status = status;
+        });
+      }
+    }
 
      var ajaxPetition = function (url) {
      // Ajax petition
@@ -295,7 +367,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
         $scope.listOfIngredients.push(element.val());
         element.val("");
       }
-      
+
 
     };
 
@@ -337,7 +409,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
 
   // Search controller
   .controller('searchCtrl', function ($rootScope, $http, $scope, $ionicPopup, $state) {
-
+    $scope.title = "Select your ingredients";
     $scope.selectedIngredient = null;
     $scope.ingredients = {};
 

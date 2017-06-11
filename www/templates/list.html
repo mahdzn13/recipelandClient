@@ -7,15 +7,42 @@
       <a ng-repeat="recipe in recipeList"
          class="item item-thumbnail-left"
          on-tap="savedRecipe({{recipe}})"
+         on-hold="addTo({{$index}},'favourite')"
+         on-swipe-right="addTo({{$index}},'seelater')"
+         on-swipe-left="addTo({{$index}},'blacklist')"
       >
-        <img ng-src="{{recipe.image}}">
+        <img ng-src="{{recipe.image}}" alt="Image of the {{recipe.name}}" title="{{recipe.name}}. Did you expected a magical tool to copy?">
         <h2>{{ recipe.name }}</h2>
-        <h4>by admin</h4>
+        <h4 ng-if="myRecipes === true" >{{ createdBy }}</h4>
+
+
+        <!--<div class="right-buttons col-75">
+          <button ng-if="search === true || seeLater === true"
+            title="You know you want me on your favourites baby"
+            class="button ion-star col-33 item-icon-right favourite"
+
+          </button>
+          <button ng-if="search === true"
+            title="Pleeease, don't forget about me later"
+            class="button ion-clock col-33 item-icon-right see-later"
+            on-tap="addTo({{$index}},'seelater')">
+          </button>
+          <button ng-if="search === true || seeLater === true"
+            title="Don't add me to the blacklist :("
+            class="button ion-document-text col-33 item-icon-right blacklist"
+            on-tap="addTo({{$index}},'blacklist')">
+          </button>
+        </div>-->
+
       </a>
 
     </div>
 
     <!--
+    ion-clock
+    ion-document-text
+    ion-star
+
     Imagen de la card
     <div class="item item-image">
       <img src="http://www.chicospl.com/wp-content/uploads/2013/12/shutterstock_94575220-300x300.jpg">
