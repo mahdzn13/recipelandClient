@@ -1,5 +1,8 @@
 {
   "name": "recipelandok",
   "app_id": "ac287b9c",
-  "type": "ionic1"
+  "type": "ionic1",
+  "watchPatterns": [
+    "scss/**/*"
+  ]
 }
