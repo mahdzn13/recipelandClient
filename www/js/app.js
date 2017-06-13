@@ -153,6 +153,24 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
+     .state('app.myProfile', {
+      url: '/myProfile',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/myProfile.html',
+          controller: 'myProfileCtrl'
+        }
+      }
+    })
+    .state('app.signIn', {
+      url: '/signIn',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/signIn.html',
+          controller: 'signInCtrl'
+        }
+      }
+    })
     .state('login', {
       url: '/login',
       templateUrl: 'templates/login.html',

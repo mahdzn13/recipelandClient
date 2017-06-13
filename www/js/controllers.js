@@ -1,5 +1,6 @@
 var neo4JDatabaseUrl = 'http://192.168.1.41:8080';
 var mongoDatabaseUrl = 'http://192.168.1.53:3000';
+var crudUserUrl = 'http://localhost:5000/api/user';
 
 angular.module('starter.controllers', [], function($httpProvider) {
   // Use x-www-form-urlencoded Content-Type
@@ -10,7 +11,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
    * @param {Object} obj
    * @return {String}
    */
-  var param = function(obj) {
+   var param = function(obj) {
     var query = '', name, value, fullSubName, subName, subValue, innerObj, i;
 
     for(name in obj) {
@@ -59,7 +60,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
 
     $scope.$on("$ionicView.beforeEnter", function() {
       //activateComment
-      //$scope.verifyToken();
+      $scope.verifyToken();
     });
 
     $scope.verifyToken = function () {
@@ -70,6 +71,8 @@ angular.module('starter.controllers', [], function($httpProvider) {
           'Authorization' : localStorage.getItem("token")
         }
       }).then(function (resp) {
+        console.log(resp.data.id)
+        $rootScope.userId = resp.data.id
 
       }, function (resp) {
         $scope.logOut();
@@ -136,6 +139,66 @@ angular.module('starter.controllers', [], function($httpProvider) {
     }, function (resp) {
     });
   })
+  //SignIn app
+  .controller('signInCtrl', function($scope, $http, $state){
+    $scope.signInData = {};
+    $scope.createUser = function(){
+      console.log($scope.signInData)
+      if($scope.signInData.username != undefined && 
+       $scope.signInData.password != undefined &&
+       $scope.signInData.email != undefined &&
+       $scope.signInData.name != undefined &&
+       $scope.signInData.surname != undefined){
+        $http.post(
+          crudUserUrl,
+          $scope.signInData
+          )
+      .success(function(data, status, headers, config) {
+        $scope.data = data;
+        $state.go("app.mainMenu");
+
+      })
+      .error(function(data, status, headers, config) {
+        console.log(status)
+        $scope.status = status;
+      });
+    }else{
+      console.log('Todos los campos son obligatorios')
+    }
+  }
+})
+  
+  //MyProfile Controller
+  .controller('myProfileCtrl', function($scope, $rootScope, $http, $state){
+    $rootScope.id;
+    $scope.updateData = {};
+    $http({
+      method: 'GET',
+      url: crudUserUrl + '/' + $rootScope.userId
+    }).then(function (resp) {
+      $scope.updateData.activated = resp.data.activated;
+      $scope.updateData.username = resp.data.username;
+      $scope.updateData.name = resp.data.name;
+      $scope.updateData.surname = resp.data.surname;
+      $scope.updateData.email = resp.data.email;
+    });
+    
+    $scope.updateUser = function(){
+      $http.put(
+        crudUserUrl,
+        $scope.updateData
+          
+      ).success(function(data, status, headers, config) {
+        $scope.data = data;
+
+      })
+      .error(function(data, status, headers, config) {
+        console.log(status)
+        $scope.status = status;
+      });
+    }
+  }
+)
 
   // Login to the app
   .controller('loginCtrl', function($scope, $http, $rootScope, $state) {
@@ -145,19 +208,19 @@ angular.module('starter.controllers', [], function($httpProvider) {
     $scope.doLogin = function () {
       //deactivateComment
       //Line must be deleted on live environment
-      $scope.neo4jlogin($scope.loginData.username);
+      //$scope.neo4jlogin($scope.loginData.username);
       $http({
         method: 'GET',
         username: $scope.loginData.username,
         password: $scope.loginData.password,
         url: mongoDatabaseUrl + '/token-local?username=' + $scope.loginData.username +'&' +
-                                'password=' + $scope.loginData.password
+        'password=' + $scope.loginData.password
       }).then(function (resp) {
         if (typeof (Storage) !== "undefined") {
           localStorage.setItem("token", "" + resp.data.split("|")[0]);
           //activateComment
           // Functional -> $scope.neo4jlogin($scope.loginData.username);
-          //$scope.neo4jlogin($scope.loginData.username);
+          $scope.neo4jlogin($scope.loginData.username);
         } else {
           console.log("Sorry! Your browser doesn't support web storage.");
         }
@@ -225,7 +288,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
       $http.post(
         neo4JDatabaseUrl + '/addAllergyToUser',
         sendData
-      )
+        )
       .success(function(data, status, headers, config) {
         $scope.data = data;
       })
@@ -257,11 +320,11 @@ angular.module('starter.controllers', [], function($httpProvider) {
     $scope.commentCount = 0;
 
     $http.get(neo4JDatabaseUrl + '/getAllCountOfCommentsFromRecipe?recipeNodeId=' + $rootScope.recipe.nodeId)
-      .success(function(data, status, headers, config) {
-          $scope.commentCount = data;
-      }).error(function(data, status, headers, config) {
+    .success(function(data, status, headers, config) {
+      $scope.commentCount = data;
+    }).error(function(data, status, headers, config) {
 
-      });
+    });
   })
 
   // Controller for user created recipes
@@ -318,7 +381,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
         $http.post(
           neo4JDatabaseUrl + '/userFavedRecipe',
           sendData
-        )
+          )
         .success(function(data, status, headers, config) {
           $scope.data = data;
         })
@@ -334,7 +397,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
         $http.post(
           neo4JDatabaseUrl + '/userSeeLaterRecipe',
           sendData
-        )
+          )
         .success(function(data, status, headers, config) {
           $scope.data = data;
         })
@@ -350,7 +413,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
         $http.post(
           neo4JDatabaseUrl + '/userBlacklistedRecipe',
           sendData
-        )
+          )
         .success(function(data, status, headers, config) {
           $scope.data = data;
         })
@@ -360,21 +423,21 @@ angular.module('starter.controllers', [], function($httpProvider) {
       }
     }
 
-     var ajaxPetition = function (url) {
+    var ajaxPetition = function (url) {
      // Ajax petition
-       $http({
-         method: 'GET',
-         url: url
-       }).then(function (resp) {
+     $http({
+       method: 'GET',
+       url: url
+     }).then(function (resp) {
          // Save recipes
          $scope.recipeList = resp.data;
        }, function (resp) {
        });
-     };
-     ajaxPetition(url);
+   };
+   ajaxPetition(url);
 
 
-  })
+ })
 
   .controller('commentListCtrl', function($scope, $http, $rootScope) {
     $rootScope.recipe;
@@ -383,11 +446,11 @@ angular.module('starter.controllers', [], function($httpProvider) {
 
 
     $http.get(neo4JDatabaseUrl + '/getAllCommentsFromRecipe?recipeNodeId=' + $rootScope.recipe.nodeId)
-      .success(function(data, status, headers, config) {
-          $scope.commentList = data;
-      }).error(function(data, status, headers, config) {
-          console.log(status);
-      });
+    .success(function(data, status, headers, config) {
+      $scope.commentList = data;
+    }).error(function(data, status, headers, config) {
+      console.log(status);
+    });
   })
 
   .controller('createRecipeCtrl', function($scope, $http, $rootScope, $ionicScrollDelegate) {
@@ -432,7 +495,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
       $http.post(
         neo4JDatabaseUrl + '/createRecipe',
         sendData
-      )
+        )
       .success(function(data, status, headers, config) {
         $scope.data = data;
         $state.go("app.mainMenu");
@@ -466,9 +529,9 @@ angular.module('starter.controllers', [], function($httpProvider) {
         $ionicPopup.show({
           title: 'Too many ingredients!',
           buttons:
-            [{
-              text: 'Ok'
-            }]
+          [{
+            text: 'Ok'
+          }]
         });
       }
     };
@@ -524,4 +587,4 @@ angular.module('starter.controllers', [], function($httpProvider) {
     });
   })
 
-;
+  ;
