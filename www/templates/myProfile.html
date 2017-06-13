@@ -1,0 +1,43 @@
+<ion-view>
+  <ion-header-bar>
+    <h1 class="title">Sign In</h1>
+  </ion-header-bar>
+  <ion-content>
+    <form>
+      <div class="list margin-top-40">
+        <label class="item item-input">
+          <span class="input-label">Username</span>
+          <input type="text" ng-model="updateData.username">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Password</span>
+          <input type="password" ng-model="updateData.password">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Email</span>
+          <input type="text" ng-model="updateData.email">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Name</span>
+          <input type="text" ng-model="updateData.name">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Surname</span>
+          <input type="text" ng-model="updateData.surname">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Activated</span>
+          <ion-checkbox ng-checked="updateData.activated">
+        </label>
+        <label class="item">
+          <button
+          ng-click="updateUser()"
+          class="button button-block button-positive"
+          >
+            Save
+          </button>
+        </label>
+      </div>
+    </form>
+  </ion-content>
+</ion-view>
