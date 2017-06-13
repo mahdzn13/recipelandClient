@@ -1,4 +1,4 @@
-var neo4JDatabaseUrl = 'http://192.168.1.48:8080';
+var neo4JDatabaseUrl = 'http://192.168.1.41:8080';
 var mongoDatabaseUrl = 'http://192.168.1.53:3000';
 
 angular.module('starter.controllers', [], function($httpProvider) {
@@ -196,6 +196,27 @@ angular.module('starter.controllers', [], function($httpProvider) {
     $scope.selectedAllergy = null;
     $scope.allergies = {};
     $scope.allAlergies = {};
+
+
+
+    $scope.addAllergy = function (selectedAllergy){
+      console.log(selectedAllergy);
+      var sendData = {
+        allergyNodeId: this.selectedAllergy.nodeId,
+        userNodeId: $rootScope.userNodeId,
+      };
+      console.log(sendData);
+      $http.post(
+        neo4JDatabaseUrl + '/addAllergyToUser',
+        sendData
+      )
+      .success(function(data, status, headers, config) {
+        $scope.data = data;
+      })
+      .error(function(data, status, headers, config) {
+        $scope.status = status;
+      });
+    }
 
     $http({
       method: 'GET',

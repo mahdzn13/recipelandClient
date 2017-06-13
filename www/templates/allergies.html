@@ -7,13 +7,22 @@
             Allergies
           </div>
           <select ng-model="selectedAllergy"
-                  ng-options="allergy.name for allergy in allAllergies">
+                  ng-change="addAllergy(selectedAllergy)"
+                  ng-options="allergy.name for allergy in allAllergies track by allergy.nodeId"
+
+          >
           </select>
+          <!--<select ng-model="selectedAllergy">
+                  <option
+                  ng-repeat="allergy in allAllergies"
+                  value="{{allergy.nodeId}}" >{{allergy.name}}</option>
+          </select>-->
         </label>
         <label class="item">
           <button
+            on-tap="addAllergy()"
             class="button button-block button-positive">
-            Añadir
+            Add allergy
           </button>
         </label>
       </div>
