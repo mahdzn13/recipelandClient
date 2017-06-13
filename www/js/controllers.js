@@ -197,7 +197,23 @@ angular.module('starter.controllers', [], function($httpProvider) {
     $scope.allergies = {};
     $scope.allAlergies = {};
 
-
+    $scope.removeAllergyFromUser = function(allergyNodeId){
+      console.log("a");
+      var sendData = {
+        allergyNodeId: allergyNodeId,
+        userNodeId: $rootScope.userNodeId,
+      };
+      $http.post(
+        neo4JDatabaseUrl + '/removeAllergyFromUser',
+        sendData
+      )
+      .success(function(data, status, headers, config) {
+        $scope.data = data;
+      })
+      .error(function(data, status, headers, config) {
+        $scope.status = status;
+      });
+    }
 
     $scope.addAllergy = function (selectedAllergy){
       console.log(selectedAllergy);
@@ -388,8 +404,6 @@ angular.module('starter.controllers', [], function($httpProvider) {
         $scope.listOfIngredients.push(element.val());
         element.val("");
       }
-
-
     };
 
     //Returns true if it finds a duplicated
@@ -421,6 +435,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
       )
       .success(function(data, status, headers, config) {
         $scope.data = data;
+        $state.go("app.mainMenu");
       })
       .error(function(data, status, headers, config) {
         $scope.status = status;
