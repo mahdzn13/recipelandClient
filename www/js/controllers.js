@@ -207,6 +207,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
   //MyProfile Controller
   .controller('myProfileCtrl', function($scope, $rootScope, $http, $state){
     $rootScope.id;
+    console.log($rootScope.userId)
     $scope.updateData = {};
     $http({
       method: 'GET',
@@ -217,6 +218,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
       $scope.updateData.name = resp.data.name;
       $scope.updateData.surname = resp.data.surname;
       $scope.updateData.email = resp.data.email;
+      console.log($scope.updateData);
     });
 
     $scope.updateUser = function(){
