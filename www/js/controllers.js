@@ -175,7 +175,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
     });
   })
   //SignIn app
-  .controller('signInCtrl', function($scope, $http, $state){
+  .controller('signInCtrl', function($scope, $http, $state, $rootScope){
     $scope.signInData = {};
     $scope.createUser = function(){
       console.log($scope.signInData)
@@ -191,23 +191,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
       .success(function(data, status, headers, config) {
         $scope.data = data;
         $rootScope.createdUserOK = true;
-        var sendData = {
-          username: $scope.signInData.username,
-          email: $scope.signInData.email,
-          name: $scope.signInData.name,
-          surname: $scope.signInData.surname
-        }; 
-        $http.post(
-          neo4JDatabaseUrl + '/createUser',
-          sendData
-          )
-        .success(function(data, status, headers, config) {
-          $scope.data = data;
-        })
-        .error(function(data, status, headers, config) {
-          $scope.status = status;
-        });
-        $state.go("app.mainMenu");
+        $state.go("login");
 
       })
       .error(function(data, status, headers, config) {
@@ -237,8 +221,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
       $scope.updateData.surname = resp.data.surname;
       $scope.updateData.email = resp.data.email;
       console.log($scope.updateData);
-    })
-    .then(function (resp) {
+    }, function (resp) {
       console.log(resp);
     });
 
