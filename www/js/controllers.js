@@ -191,6 +191,22 @@ angular.module('starter.controllers', [], function($httpProvider) {
       .success(function(data, status, headers, config) {
         $scope.data = data;
         $rootScope.createdUserOK = true;
+        var sendData = {
+          username: $scope.signInData.username,
+          email: $scope.signInData.email,
+          name: $scope.signInData.name,
+          surname: $scope.signInData.surname
+        }; 
+        $http.post(
+          neo4JDatabaseUrl + '/createUser',
+          sendData
+          )
+        .success(function(data, status, headers, config) {
+          $scope.data = data;
+        })
+        .error(function(data, status, headers, config) {
+          $scope.status = status;
+        });
         $state.go("app.mainMenu");
 
       })
