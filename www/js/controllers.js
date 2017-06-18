@@ -1,6 +1,6 @@
-var neo4JDatabaseUrl = 'http://192.168.1.41:8080';
+var neo4JDatabaseUrl = 'http://192.168.1.33:8080';
 var mongoDatabaseUrl = 'http://192.168.1.53:3000';
-var crudUserUrl = 'http://localhost:5000/api/user';
+var crudUserUrl = 'http://192.168.1.53:5000/api/user';
 
 angular.module('starter.controllers', [], function($httpProvider) {
   // Use x-www-form-urlencoded Content-Type
