@@ -1,6 +1,6 @@
 var neo4JDatabaseUrl = 'http://192.168.1.33:8080';
 var mongoDatabaseUrl = 'http://192.168.1.53:3000';
-var crudUserUrl = 'http://localhost:5000/api/user';
+var crudUserUrl = 'http://192.168.1.53:5000/api/user';
 
 angular.module('starter.controllers', [], function($httpProvider) {
   // Use x-www-form-urlencoded Content-Type
@@ -60,7 +60,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
 
     $scope.$on("$ionicView.beforeEnter", function() {
       //activateComment
-      //$scope.verifyToken();
+      $scope.verifyToken();
     });
 
     $scope.verifyToken = function () {
@@ -254,7 +254,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
     $scope.doLogin = function () {
       //deactivateComment
       //Line must be deleted on live environment
-      $scope.neo4jlogin($scope.loginData.username);
+      //$scope.neo4jlogin($scope.loginData.username);
       $http({
         method: 'GET',
         username: $scope.loginData.username,
@@ -266,7 +266,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
           localStorage.setItem("token", "" + resp.data.split("|")[0]);
           //activateComment
           // Functional -> $scope.neo4jlogin($scope.loginData.username);
-          //$scope.neo4jlogin($scope.loginData.username);
+          $scope.neo4jlogin($scope.loginData.username);
         } else {
           console.log("Sorry! Your browser doesn't support web storage.");
         }
@@ -386,7 +386,7 @@ angular.module('starter.controllers', [], function($httpProvider) {
     if ($rootScope.recipeCreatedOK === true){
       $rootScope.recipeCreatedOK = false;
       $ionicPopup.show({
-        title: 'Account created succesfully!',
+        title: 'Recipe created succesfully!',
         buttons:
         [{
           text: 'Ok'
