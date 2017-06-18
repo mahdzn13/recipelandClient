@@ -4,17 +4,27 @@
   </ion-nav-title>
   <ion-content>
     <div ng-controller="listCtrl" class="list">
-      <a ng-repeat="recipe in recipeList"
+
+      <a ng-if="seeLater === true"
+         ng-repeat="recipe in recipeList"
          class="item item-thumbnail-left"
          on-tap="savedRecipe({{recipe}})"
          on-hold="addTo({{$index}},'favourite')"
-         on-swipe-right="addTo({{$index}},'seelater')"
          on-swipe-left="addTo({{$index}},'blacklist')"
       >
         <img ng-src="{{recipe.image}}" alt="Image of the {{recipe.name}}" title="{{recipe.name}}. Did you expected a magical tool to copy?">
         <h2>{{ recipe.name }}</h2>
-        <h4 ng-if="myRecipes === true" >{{ createdBy }}</h4>
+      </a>
 
+      <a ng-if="seeLater !== true"
+         ng-repeat="recipe in recipeList"
+         class="item item-thumbnail-left"
+         on-tap="removeFromList('{{recipe.nodeId}}')"
+         on-hold="addTo({{$index}},'favourite')"
+         on-swipe-left="addTo({{$index}},'blacklist')"
+      >
+        <img ng-src="{{recipe.image}}" alt="Image of the {{recipe.name}}" title="{{recipe.name}}. Did you expected a magical tool to copy?">
+        <h2>{{ recipe.name }}</h2>
       </a>
 
     </div>
