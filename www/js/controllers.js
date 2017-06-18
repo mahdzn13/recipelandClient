@@ -207,11 +207,13 @@ angular.module('starter.controllers', [], function($httpProvider) {
   //MyProfile Controller
   .controller('myProfileCtrl', function($scope, $rootScope, $http, $state){
     $rootScope.id;
-    console.log($rootScope.userId)
+    console.log("userID" + $rootScope.userId)
+    var urlGet = crudUserUrl + '/' + $rootScope.userId;
+    console.log(urlGet);
     $scope.updateData = {};
     $http({
       method: 'GET',
-      url: crudUserUrl + '/' + $rootScope.userId
+      url: urlGet
     }).then(function (resp) {
       $scope.updateData.activated = resp.data.activated;
       $scope.updateData.username = resp.data.username;
@@ -219,6 +221,9 @@ angular.module('starter.controllers', [], function($httpProvider) {
       $scope.updateData.surname = resp.data.surname;
       $scope.updateData.email = resp.data.email;
       console.log($scope.updateData);
+    })
+    .then(function (resp) {
+      console.log(resp);
     });
 
     $scope.updateUser = function(){
