@@ -191,6 +191,23 @@ angular.module('starter.controllers', [], function($httpProvider) {
       .success(function(data, status, headers, config) {
         $scope.data = data;
         $rootScope.createdUserOK = true;
+        var sendData = {
+          username: $scope.signInData.username,
+          email: $scope.signInData.email,
+          name: $scope.signInData.name,
+          surname: $scope.signInData.surname
+        };
+
+       $http.post(
+          neo4JDatabaseUrl + '/createUser',
+          sendData
+          )
+       .success(function(data, status, headers, config) {
+         $scope.data = data;
+        })
+        .error(function(data, status, headers, config) {
+          $scope.status = status;
+        });
         $state.go("login");
 
       })
@@ -261,25 +278,29 @@ angular.module('starter.controllers', [], function($httpProvider) {
       //deactivateComment
       //Line must be deleted on live environment
       //$scope.neo4jlogin($scope.loginData.username);
-      $http({
-        method: 'GET',
+      var sendData = {
         username: $scope.loginData.username,
-        password: $scope.loginData.password,
-        url: mongoDatabaseUrl + '/token-local?username=' + $scope.loginData.username +'&' +
-        'password=' + $scope.loginData.password
-      }).then(function (resp) {
-        if (typeof (Storage) !== "undefined") {
-          localStorage.setItem("token", "" + resp.data.split("|")[0]);
-          //activateComment
-          // Functional -> $scope.neo4jlogin($scope.loginData.username);
-          $scope.neo4jlogin($scope.loginData.username);
-        } else {
-          console.log("Sorry! Your browser doesn't support web storage.");
-        }
-      }, function (resp) {
-        console.log("error");
-        console.log(resp.data);
+        password: $scope.loginData.password
+      };
+
+     $http.post(
+        mongoDatabaseUrl + '/token-local',
+        sendData
+        )
+     .success(function(data, status, headers, config) {
+       if (typeof (Storage) !== "undefined") {
+         localStorage.setItem("token", "" + data.split("|")[0]);
+         //activateComment
+         // Functional -> $scope.neo4jlogin($scope.loginData.username);
+         $scope.neo4jlogin($scope.loginData.username);
+       } else {
+         console.log("Sorry! Your browser doesn't support web storage.");
+       }
+      })
+      .error(function(data, status, headers, config) {
+        $scope.status = status;
       });
+
     };
 
     // Neo4J 'login', getting userNodeId
