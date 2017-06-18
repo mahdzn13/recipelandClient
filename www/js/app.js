@@ -61,7 +61,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       url: '/blacklist',
       views: {
         'menuContent': {
-          templateUrl: 'templates/list.html',
+          templateUrl: 'templates/relationList.html',
           controller: 'blacklistCtrl'
         }
       }
@@ -71,7 +71,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       url: '/fav',
       views: {
         'menuContent': {
-          templateUrl: 'templates/list.html',
+          templateUrl: 'templates/relationList.html',
           controller: 'favCtrl'
         }
       }
@@ -81,7 +81,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       url: '/seelater',
       views: {
         'menuContent': {
-          templateUrl: 'templates/list.html',
+          templateUrl: 'templates/relationList.html',
           controller: 'seelaterCtrl'
         }
       }
@@ -162,14 +162,10 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
-    .state('app.signIn', {
+    .state('signIn', {
       url: '/signIn',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/signIn.html',
-          controller: 'signInCtrl'
-        }
-      }
+      templateUrl: 'templates/signIn.html',
+      controller: 'signInCtrl'
     })
     .state('login', {
       url: '/login',
